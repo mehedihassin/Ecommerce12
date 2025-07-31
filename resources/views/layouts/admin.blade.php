@@ -58,7 +58,7 @@
 
                 <div class="section-menu-left">
                     <div class="box-logo">
-                        <a href="index.html" id="site-logo-inner">
+                        <a href="{{ route('admin.index') }}" id="site-logo-inner">
                             <img class="" id="logo_header" alt=""
                                 src="{{ asset('images/logo/logo.png') }}" data-light="images/logo/logo.png"
                                 data-dark="images/logo/logo.png">
@@ -72,7 +72,7 @@
                             <div class="center-heading">Main Home</div>
                             <ul class="menu-list">
                                 <li class="menu-item">
-                                    <a href="index.html" class="">
+                                    <a href="{{ route('admin.index') }}" class="">
                                         <div class="icon"><i class="icon-grid"></i></div>
                                         <div class="text">Dashboard</div>
                                     </a>
@@ -99,42 +99,54 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="menu-item has-children">
+
+
+                                <li
+                                    class="menu-item has-children {{ request()->routeIs('admin.brands.*') ? 'active open' : '' }}">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-layers"></i></div>
                                         <div class="text">Brand</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
-                                            <a href="{{ route('admin.brands.create') }}" class="">
+                                            <a href="{{ route('admin.brands.create') }}"
+                                                class="{{ request()->routeIs('admin.brands.create') ? 'active' : '' }}">
                                                 <div class="text">New Brand</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
-                                            <a href="{{ route('admin.brands.index') }}" class="">
+                                            <a href="{{ route('admin.brands.index') }}"
+                                                class="{{ request()->routeIs('admin.brands.index') ? 'active' : '' }}">
                                                 <div class="text">Brands</div>
                                             </a>
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="menu-item has-children">
+
+
+
+                                <li
+                                    class="menu-item has-children {{ request()->routeIs('admin.category.*') ? 'active open' : '' }}">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-layers"></i></div>
                                         <div class="text">Category</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
-                                            <a href="add-category.html" class="">
+                                            <a href="{{ route('admin.category.create') }}"
+                                                class="{{ request()->routeIs('admin.category.create') ? 'active' : '' }}">
                                                 <div class="text">New Category</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
-                                            <a href="categories.html" class="">
+                                            <a href="{{ route('admin.category.index') }}"
+                                                class="{{ request()->routeIs('admin.category.index') ? 'active' : '' }}">
                                                 <div class="text">Categories</div>
                                             </a>
                                         </li>
                                     </ul>
                                 </li>
+
 
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
@@ -430,20 +442,28 @@
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
-                                                <span class="image">
-                                                    <img src="{{ asset('images/avatar/user-1.png') }}"
-                                                        alt="">
-                                                </span>
+                                                @if ($user->image)
+                                                    <span class="image">
+                                                        <img src="data:image/jpeg;base64,{{ base64_encode($user->image) }}"
+                                                            alt="User Image" />
+                                                    </span>
+                                                @else
+                                                    <span class="image">
+                                                        <img src="{{ asset('images/avatar/user-1.png') }}"
+                                                            alt="Default Avatar" />
+                                                    </span>
+                                                @endif
+
                                                 <span class="flex flex-column">
-                                                    <span class="body-title mb-2">Kristin Watson</span>
-                                                    <span class="text-tiny">Admin</span>
+                                                    <span class="body-title mb-2">{{ Auth::user()->name }}</span>
+                                                    {{-- <span class="text-tiny">Email:{{ Auth::user()->email }} </span> --}}
                                                 </span>
                                             </span>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end has-content"
                                             aria-labelledby="dropdownMenuButton3">
                                             <li>
-                                                <a href="#" class="user-item">
+                                                <a href="{{ route('admin.profile') }}" class="user-item">
                                                     <div class="icon">
                                                         <i class="icon-user"></i>
                                                     </div>
@@ -476,13 +496,21 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="login.html" class="user-item">
+                                                <a href="#"
+                                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                                    class="user-item">
                                                     <div class="icon">
                                                         <i class="icon-log-out"></i>
                                                     </div>
                                                     <div class="body-title-2">Log out</div>
                                                 </a>
+                                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                    style="display: none;">
+                                                    @csrf
+                                                </form>
                                             </li>
+
+
                                         </ul>
                                     </div>
                                 </div>

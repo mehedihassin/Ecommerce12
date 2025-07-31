@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 @section('content')
     <div class="main-content-inner">
-        
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
                 <h3>Brand infomation</h3>
@@ -29,20 +28,22 @@
             </div>
             <!-- new-category -->
             <div class="wg-box">
-                  <a class="tf-button style-1 w208" href="{{ route('admin.brands.index') }}"><i class="icon-list"></i>Brand List</a>
-                <form class="form-new-product form-style-1" action="{{ route('admin.brands.store') }}" method="POST"
-                    enctype="multipart/form-data">
+                <form class="form-new-product form-style-1" action="{{ route('admin.brands.update',$brands->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT') {{-- Important for update --}}
+
                     <fieldset class="name">
                         <div class="body-title">Brand Name <span class="tf-color-1">*</span></div>
                         <input class="flex-grow" type="text" placeholder="Brand name" name="name" tabindex="0"
-                            value="{{ old('name') }}" aria-required="true" required="">
+                            value="{{ old('name', $brands->name) }}" aria-required="true" required>
                     </fieldset>
+
                     <fieldset class="name">
                         <div class="body-title">Brand Slug <span class="tf-color-1">*</span></div>
                         <input class="flex-grow" type="text" placeholder="Brand Slug" name="slug" tabindex="0"
-                            value="{{ old('slug') }}" aria-required="true" required="">
+                            value="{{ old('slug', $brands->slug) }}" aria-required="true" required>
                     </fieldset>
+
                     <fieldset>
                         <div class="body-title">Upload images <span class="tf-color-1">*</span></div>
                         <div class="upload-image flex-grow">
@@ -58,18 +59,27 @@
                                 </label>
                             </div>
 
-                            <!-- 👇 Container for previews -->
+
+
                             <div id="image-preview-container"
-                                style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+                                style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px;">
+                                @foreach ($brands->images as $image)
+                                    <div style="position: relative; display: inline-block;">
+                                        <img src="data:image/jpeg;base64,{{ base64_encode($image->image) }}"
+                                            style="height: 80px; width: auto; object-fit: cover; border-radius: 4px;">
+                                    </div>
+                                @endforeach
+                            </div>
+
                         </div>
                     </fieldset>
 
-
                     <div class="bot">
                         <div></div>
-                        <button class="tf-button w208" type="submit">Save</button>
+                        <button class="tf-button w208" type="submit">Update</button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
@@ -79,7 +89,7 @@
     <script>
         document.getElementById('myFile').addEventListener('change', function(event) {
             const container = document.getElementById('image-preview-container');
-            container.innerHTML = ''; // Clear previous previews
+            container.innerHTML = ''; // Clear previous previews (including old existing images)
 
             Array.from(event.target.files).forEach(file => {
                 if (file.type.startsWith('image/')) {
@@ -88,11 +98,11 @@
                         const img = document.createElement('img');
                         img.src = e.target.result;
                         img.alt = 'Preview';
-                        img.classList.add('effect8');
                         img.style.width = '100px';
                         img.style.height = '100px';
                         img.style.objectFit = 'cover';
                         img.style.borderRadius = '8px';
+                        img.style.marginRight = '10px';
                         container.appendChild(img);
                     };
                     reader.readAsDataURL(file);
